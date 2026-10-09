@@ -9,7 +9,12 @@ const props = defineProps<{
   follow: boolean;
   loaded: boolean;
 }>();
-const emit = defineEmits<{ open: [id: string]; create: [title: string]; archive: [id: string]; "update:follow": [on: boolean] }>();
+const emit = defineEmits<{
+  open: [id: string];
+  create: [title: string];
+  archive: [id: string];
+  "update:follow": [on: boolean];
+}>();
 
 const naming = ref(false);
 const title = ref("");
@@ -67,6 +72,14 @@ function create(): void {
           <span class="rail-title">{{ row.session.title }}</span>
           <span v-if="row.headed" class="rail-badge">Claude Code</span>
           <span class="rail-when">{{ row.when }}</span>
+        </button>
+        <button
+          type="button"
+          class="rail-archive"
+          :aria-label="`Archive ${row.session.title}`"
+          @click.stop="emit('archive', row.session.id)"
+        >
+          ×
         </button>
       </li>
     </ul>

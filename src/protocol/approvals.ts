@@ -35,7 +35,12 @@ export function answerFor(approvalId: string, choice: Choice): ApprovalInput {
   if (only.length > 0 && (!choice.approved || lifetime === "once")) {
     throw new Error("A limit to some values belongs to a standing yes, never to a one-time yes or a denial.");
   }
-  const answer: ApprovalInput = { type: "input.approval", approval_id: approvalId, approved: choice.approved, lifetime };
+  const answer: ApprovalInput = {
+    type: "input.approval",
+    approval_id: approvalId,
+    approved: choice.approved,
+    lifetime,
+  };
   if (only.length > 0) answer.only = only;
   const instruction = choice.instruction?.trim().slice(0, MAX_INSTRUCTION);
   if (instruction) answer.instruction = instruction;

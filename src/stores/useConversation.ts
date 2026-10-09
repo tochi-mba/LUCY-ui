@@ -10,7 +10,7 @@
  * Sending uses the one write path with a fresh idempotency key per message. A network failure is
  * retried with the same key, so the hub sees one message however many times it was posted.
  */
-import { onScopeDispose, reactive, type Ref, watch } from "vue";
+import { onScopeDispose, type Ref, reactive, watch } from "vue";
 import { answerFor, type Choice } from "../protocol/approvals";
 import { EVENT } from "../protocol/events";
 import { describe, Unreachable } from "../transport/errors";

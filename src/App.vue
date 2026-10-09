@@ -42,7 +42,6 @@ async function create(title: string): Promise<void> {
   const session = await sessions.create({ title: title || "New conversation" });
   if (session !== null) open(session.id);
 }
-
 </script>
 
 <template>

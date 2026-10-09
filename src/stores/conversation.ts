@@ -17,7 +17,7 @@
  */
 import { blockIdOf, EVENT, isKnownEvent, type LucyEvent } from "../protocol/events";
 import { isRecord, type JsonRecord, number, optionalText, text, texts } from "../protocol/guards";
-import { type ApprovalRequest, approvalRequestOf, approvalResponseOf, type Item, asItem } from "../protocol/items";
+import { type ApprovalRequest, approvalRequestOf, approvalResponseOf, asItem, type Item } from "../protocol/items";
 import type { StreamState } from "../transport/types";
 
 export type TurnStatus =
@@ -283,7 +283,10 @@ function retireText(state: ConversationState, turnId: string | null): void {
   if (index >= 0) state.blocks.splice(index, 1);
 }
 
-function recordAnswer(state: ConversationState, response: { approval_id: string; approved: boolean; lifetime: string; instruction: string }): void {
+function recordAnswer(
+  state: ConversationState,
+  response: { approval_id: string; approved: boolean; lifetime: string; instruction: string },
+): void {
   state.cards[response.approval_id] = {
     status: response.approved ? "granted" : "denied",
     lifetime: response.lifetime,
@@ -345,7 +348,8 @@ function finishTurn(state: ConversationState, event: LucyEvent, status: TurnStat
   state.turn = { id: turnId, status, slow: false };
   for (const block of state.blocks) if (block.turnId === turnId) block.open = false;
   state.blocks = state.blocks.filter((block) => !(block.kind === "reasoning" && block.turnId === turnId));
-  state.outcome = status === "completed" ? { kind: "done", at: now } : status === "failed" ? { kind: "failed", at: now } : null;
+  state.outcome =
+    status === "completed" ? { kind: "done", at: now } : status === "failed" ? { kind: "failed", at: now } : null;
 }
 
 function windowOf(data: JsonRecord): WindowReport {

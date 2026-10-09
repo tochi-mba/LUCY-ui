@@ -21,7 +21,7 @@ const busy = computed(() => props.card.status === "answering");
 const args = computed(() => {
   const value = request.value.arguments;
   if (value === null || (typeof value === "object" && Object.keys(value as object).length === 0)) return "";
-  return JSON.stringify(value, null, 2) ?? "";
+  return JSON.stringify(value, null, 2);
 });
 const limitChosen = computed(() => (chosen.value.size > 0 ? [...chosen.value] : undefined));
 

@@ -57,6 +57,33 @@
   flex-direction: column;
   gap: 2px;
 }
+.rail-list li {
+  display: flex;
+  align-items: center;
+}
+.rail-list li .rail-row {
+  flex: 1;
+  min-width: 0;
+}
+.rail-archive {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+}
+.rail-list li:hover .rail-archive,
+.rail-archive:focus-visible {
+  opacity: 1;
+}
+.rail-archive:hover {
+  background: var(--raised);
+  color: var(--live);
+}
 .rail-row {
   width: 100%;
   display: flex;

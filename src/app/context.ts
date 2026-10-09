@@ -4,7 +4,7 @@
  * Provided once by main.ts (core) and App.vue (shell), injected where needed. Tests provide fakes
  * under the same keys, which is the whole reason these are injected rather than imported.
  */
-import { inject, type InjectionKey, type Ref } from "vue";
+import { type InjectionKey, inject, type Ref } from "vue";
 import type { Auth } from "../auth/auth";
 import type { useSessions } from "../stores/useSessions";
 import type { LucyTransport } from "../transport/types";

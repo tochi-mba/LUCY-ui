@@ -13,11 +13,14 @@ const pasted = ref("");
 const copied = ref(false);
 
 const state = computed(() => props.auth.state);
-const command = computed(() => `lucy approve ${state.value.code?.user_code ?? ""}`);
 
-async function copy(): Promise<void> {
+function commandFor(code: { user_code: string }): string {
+  return `lucy approve ${code.user_code}`;
+}
+
+async function copy(command: string): Promise<void> {
   try {
-    await navigator.clipboard.writeText(command.value);
+    await navigator.clipboard.writeText(command);
     copied.value = true;
     setTimeout(() => {
       copied.value = false;
@@ -45,8 +48,8 @@ function paste(): void {
       <template v-if="state.phase === 'code' && state.code">
         <p>From a terminal already signed in as you:</p>
         <p class="code-row">
-          <code class="user-code">{{ command }}</code>
-          <button type="button" class="button small" @click="copy">{{ copied ? "Copied" : "Copy" }}</button>
+          <code class="user-code">{{ commandFor(state.code) }}</code>
+          <button type="button" class="button small" @click="copy(commandFor(state.code!))">{{ copied ? "Copied" : "Copy" }}</button>
         </p>
         <p class="dialog-note">Waiting for the approval… the code works for ten minutes.</p>
         <button type="button" class="button ghost" @click="auth.cancel()">Start over</button>

@@ -5,7 +5,7 @@
  * or something is live, and slowly otherwise. Listing is also when the hub archives idle
  * conversations, which is one more reason not to do it in a tight loop.
  */
-import { onScopeDispose, reactive, type Ref, watch } from "vue";
+import { onScopeDispose, type Ref, reactive, watch } from "vue";
 import { byActivity, type CreateSession, isLive, type Session } from "../protocol/sessions";
 import { describe } from "../transport/errors";
 import type { LucyTransport } from "../transport/types";
@@ -44,11 +44,14 @@ export function useSessions(
     timer = null;
     if (stopped || !options.enabled.value) return;
     const fast = options.follow.value || state.sessions.some(isLive);
-    timer = setTimeout(async () => {
-      timer = null;
-      await refresh();
-      schedule();
-    }, fast ? FAST_MS : SLOW_MS);
+    timer = setTimeout(
+      async () => {
+        timer = null;
+        await refresh();
+        schedule();
+      },
+      fast ? FAST_MS : SLOW_MS,
+    );
   }
 
   async function create(body: CreateSession): Promise<Session | null> {

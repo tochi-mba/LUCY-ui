@@ -24,13 +24,10 @@ const cardByItem = computed(() => {
 });
 
 /** Streamed text that has not been retired into an item yet, and open reasoning. */
-const liveBlocks = computed(() =>
-  props.conversation.blocks.filter((block) => block.kind === "text" || block.open),
-);
+const liveBlocks = computed(() => props.conversation.blocks.filter((block) => block.kind === "text" || block.open));
 
-function onScroll(): void {
-  const el = scroller.value;
-  if (el === null) return;
+function onScroll(event: Event): void {
+  const el = event.currentTarget as HTMLElement;
   pinned.value = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
 }
 

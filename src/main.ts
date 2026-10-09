@@ -1,8 +1,8 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import { CORE } from "./app/context";
 import { createAuth } from "./auth/auth";
 import { sessionTokenStore } from "./auth/tokenStore";
-import { CORE } from "./app/context";
 import { makeRouter } from "./router";
 import { HttpTransport } from "./transport/http";
 import "./styles/tokens.css";

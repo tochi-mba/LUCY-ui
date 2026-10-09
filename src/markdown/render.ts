@@ -8,8 +8,7 @@ import MarkdownIt from "markdown-it";
 const renderer = new MarkdownIt({ html: false, linkify: true, breaks: true });
 
 const defaultLink =
-  renderer.renderer.rules.link_open ??
-  ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options));
+  renderer.renderer.rules.link_open ?? ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options));
 
 renderer.renderer.rules.link_open = (tokens, idx, options, env, self) => {
   const token = tokens[idx]!;

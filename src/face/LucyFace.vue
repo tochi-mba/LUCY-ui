@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { type AvatarElement, AvatarDriver, type FaceDriver } from "./driver";
+import { AvatarDriver, type AvatarElement, type FaceDriver } from "./driver";
 import { MOOD_TEXT, type Mood } from "./moods";
 import { registerFace } from "./register";
 
@@ -12,7 +12,11 @@ const props = withDefaults(
     register?: () => Promise<void>;
     driverFor?: (element: HTMLElement) => FaceDriver;
   }>(),
-  { size: 168, register: () => registerFace(), driverFor: (element: HTMLElement) => new AvatarDriver(element as unknown as AvatarElement) },
+  {
+    size: 168,
+    register: () => registerFace(),
+    driverFor: (element: HTMLElement) => new AvatarDriver(element as unknown as AvatarElement),
+  },
 );
 
 const host = ref<HTMLElement | null>(null);

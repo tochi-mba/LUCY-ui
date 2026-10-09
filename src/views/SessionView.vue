@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onScopeDispose, ref, toRef, watch } from "vue";
 import { useCore, useShell } from "../app/context";
-import Composer from "../components/Composer.vue";
+import MessageComposer from "../components/MessageComposer.vue";
 import SidePanel from "../components/SidePanel.vue";
 import TranscriptView from "../components/TranscriptView.vue";
 import LucyFace from "../face/LucyFace.vue";
@@ -77,7 +77,7 @@ function answer(approvalId: string, choice: Choice): void {
       <button type="button" class="button small ghost" @click="conversation.dismissError()">Dismiss</button>
     </p>
 
-    <Composer
+    <MessageComposer
       :turn="state.turn.status"
       :disabled="core.auth.state.phase !== 'signed_in'"
       @send="(text) => conversation.send(text)"
