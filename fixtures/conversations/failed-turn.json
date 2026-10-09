@@ -1,0 +1,20 @@
+{
+  "title": "A turn that fails",
+  "reply": [
+    { "after_ms": 60, "type": "lucy.turn.started", "data": {} },
+    {
+      "after_ms": 150,
+      "type": "item",
+      "item": {
+        "type": "error",
+        "role": "assistant",
+        "content": { "code": "model_unavailable", "detail": "The model did not answer in time." }
+      }
+    },
+    {
+      "after_ms": 30,
+      "type": "lucy.turn.failed",
+      "data": { "termination": "failed", "stop_reason": "model_unavailable" }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "includes": ["**", "!dist", "!node_modules", "!test-results", "!playwright-report", "!coverage"]
+    "includes": ["**", "!dist", "!node_modules", "!test-results", "!playwright-report", "!coverage", "!site"]
   },
   "formatter": {
     "indentStyle": "space",
@@ -57,7 +57,7 @@
       }
     },
     {
-      "includes": ["public/favicon.svg", "site/favicon.svg"],
+      "includes": ["public/favicon.svg"],
       "linter": {
         "rules": {
           "a11y": {

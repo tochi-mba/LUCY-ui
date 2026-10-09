@@ -1,0 +1,84 @@
+{
+  "title": "Music with an approval",
+  "reply": [
+    { "after_ms": 60, "type": "lucy.turn.started", "data": {} },
+    {
+      "after_ms": 150,
+      "type": "item",
+      "item": {
+        "type": "tool_result",
+        "role": "tool",
+        "content": {
+          "step_id": "found",
+          "operation": "music.find",
+          "status": "ok",
+          "note": "Find Lonely At The Top by Asake",
+          "summary": "1 track: Lonely At The Top — Asake",
+          "notices": [],
+          "error": "",
+          "duration_ms": 420
+        }
+      }
+    },
+    {
+      "after_ms": 80,
+      "type": "approval",
+      "card": {
+        "tool": "music.play",
+        "description": "Play what music.find found on your default speaker?",
+        "permission": "music.playback",
+        "arguments": { "track": "$found", "device": "Study PC" }
+      }
+    },
+    {
+      "approved": [
+        {
+          "after_ms": 120,
+          "type": "item",
+          "item": {
+            "type": "tool_result",
+            "role": "tool",
+            "content": {
+              "step_id": "play",
+              "operation": "music.play",
+              "status": "ok",
+              "note": "Play it on Study PC",
+              "summary": "playing",
+              "notices": [],
+              "error": "",
+              "duration_ms": 900
+            }
+          }
+        },
+        { "after_ms": 60, "type": "lucy.content.text.start", "data": {} },
+        {
+          "after_ms": 40,
+          "type": "lucy.content.text.delta",
+          "data": { "delta": "Playing Lonely At The Top by Asake on Study PC." }
+        },
+        { "after_ms": 20, "type": "lucy.content.text.end", "data": {} },
+        {
+          "after_ms": 20,
+          "type": "item",
+          "item": {
+            "type": "message",
+            "role": "assistant",
+            "content": "Playing Lonely At The Top by Asake on Study PC."
+          }
+        },
+        { "after_ms": 30, "type": "lucy.turn.completed", "data": { "termination": "completed", "stop_reason": null } }
+      ],
+      "denied": [
+        { "after_ms": 80, "type": "lucy.content.text.start", "data": {} },
+        { "after_ms": 40, "type": "lucy.content.text.delta", "data": { "delta": "Alright, I will not play it." } },
+        { "after_ms": 20, "type": "lucy.content.text.end", "data": {} },
+        {
+          "after_ms": 20,
+          "type": "item",
+          "item": { "type": "message", "role": "assistant", "content": "Alright, I will not play it." }
+        },
+        { "after_ms": 30, "type": "lucy.turn.completed", "data": { "termination": "completed", "stop_reason": null } }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "title": "Spotify is not connected",
+  "reply": [
+    { "after_ms": 60, "type": "lucy.turn.started", "data": {} },
+    {
+      "after_ms": 120,
+      "type": "lucy.connection.required",
+      "data": {
+        "status": "connection_required",
+        "service": "spotify",
+        "profile": "personal",
+        "scopes": ["playback"],
+        "connect_url": "https://example.invalid/connect?ticket=fixture",
+        "message": "spotify is not connected for profile 'personal'. Ask the person to open the link. Do not ask them for a password or a token."
+      }
+    },
+    { "after_ms": 60, "type": "lucy.content.text.start", "data": {} },
+    {
+      "after_ms": 40,
+      "type": "lucy.content.text.delta",
+      "data": { "delta": "Spotify is not connected yet; the panel has the link." }
+    },
+    { "after_ms": 20, "type": "lucy.content.text.end", "data": {} },
+    {
+      "after_ms": 20,
+      "type": "item",
+      "item": {
+        "type": "message",
+        "role": "assistant",
+        "content": "Spotify is not connected yet; the panel has the link."
+      }
+    },
+    { "after_ms": 30, "type": "lucy.turn.completed", "data": { "termination": "completed", "stop_reason": null } }
+  ]
+}

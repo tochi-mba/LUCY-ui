@@ -5,7 +5,6 @@ import { defineComponent, h, ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { CORE, SHELL, useCore, useShell } from "../../src/app/context";
 import { createAuth } from "../../src/auth/auth";
-import type { FaceDriver } from "../../src/face/driver";
 import type { Mood } from "../../src/face/moods";
 import type { LucyEvent } from "../../src/protocol/events";
 import type { Page, Session } from "../../src/protocol/sessions";

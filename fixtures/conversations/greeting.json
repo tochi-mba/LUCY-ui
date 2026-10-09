@@ -1,0 +1,35 @@
+{
+  "title": "Saying hello",
+  "reply": [
+    { "after_ms": 60, "type": "lucy.turn.started", "data": {} },
+    { "after_ms": 120, "type": "lucy.content.text.start", "data": {} },
+    { "after_ms": 40, "type": "lucy.content.text.delta", "data": { "delta": "Hello! I can plan, " } },
+    { "after_ms": 40, "type": "lucy.content.text.delta", "data": { "delta": "ask before I act, " } },
+    { "after_ms": 40, "type": "lucy.content.text.delta", "data": { "delta": "and remember with provenance." } },
+    { "after_ms": 30, "type": "lucy.content.text.end", "data": {} },
+    {
+      "after_ms": 20,
+      "type": "item",
+      "item": {
+        "type": "message",
+        "role": "assistant",
+        "content": "Hello! I can plan, ask before I act, and remember with provenance."
+      }
+    },
+    {
+      "after_ms": 20,
+      "type": "lucy.context.status",
+      "data": {
+        "used_tokens": 5200,
+        "window_tokens": 128000,
+        "percent": 4,
+        "warn_at_percent": 60,
+        "compact_at_percent": 72,
+        "tokens_until_compaction": 86960,
+        "summarised_turns": 0,
+        "state": "ok"
+      }
+    },
+    { "after_ms": 30, "type": "lucy.turn.completed", "data": { "termination": "completed", "stop_reason": null } }
+  ]
+}

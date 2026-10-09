@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LUCY-ui is Lucy's face: a browser client for the LUCY hub with an expressive animated face, a streamed transcript, and approval cards you answer in place. A REX Technologies product.">
+<meta name="robots" content="index,follow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080A09">
+<meta property="og:title" content="LUCY-ui — Lucy's face in the browser — REX Technologies">
+<meta property="og:description" content="Watch Lucy think, work and ask. A face that follows the conversation, streamed text, and approval cards, on the hub's own event stream.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tochi-mba.github.io/LUCY-ui/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://tochi-mba.github.io/LUCY-ui/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.replace("no-js","js");</script>
+<noscript><style>@media(max-width:760px){.site-nav{display:flex!important;position:static!important;flex-direction:column}.menu-button{display:none!important}}</style></noscript>
+<title>LUCY-ui — Lucy's face in the browser — REX Technologies</title>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="ambient ambient-one" aria-hidden="true"></div>
+<div class="ambient ambient-two" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="#top" aria-label="LUCY-ui, by REX Technologies">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M9 7v18h14"/><circle cx="23" cy="9" r="2.5"/></svg></span>
+      <span class="brand-lockup"><span class="brand-company">REX Technologies</span><span class="brand-name">LUCY-ui</span></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span></span><span></span></button>
+    <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+      <a href="#face">The face</a>
+      <a href="#how">What you see</a>
+      <a href="#headed">Headed mode</a>
+      <a href="#install">Run it</a>
+      <a href="#safety">Safety</a>
+      <a class="nav-github" href="https://github.com/tochi-mba/LUCY-ui">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero container" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow signal">Browser client · for the LUCY hub</p>
+      <h1>Lucy gets a <span>face</span>.</h1>
+      <p class="hero-lede">
+        LUCY-ui is the hub's web client. A face that thinks while Lucy thinks and asks when she
+        needs you, her words streaming in as she says them, and every approval card answered in
+        place. It speaks the hub's own event stream, nothing invented.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#install">Run it on your machine</a>
+        <a class="button button-secondary" href="https://github.com/tochi-mba/LUCY-ui">Source on GitHub</a>
+      </div>
+      <div class="hero-meta">
+        <span>Vue 3 + TypeScript</span>
+        <span>No hub changes needed</span>
+        <span>No telemetry</span>
+        <span>MIT licensed</span>
+      </div>
+    </div>
+    <pre class="console" aria-label="A conversation as the UI shows it"><code><span class="k">face</span>  (°-°)  thinking…
+
+<span class="you">you ›</span> play lonely at the top by asake
+
+<span class="k">step</span>  music.find   1 track: Lonely At The Top — Asake
+
+<span class="s">card</span>  Play what music.find found on your default speaker?
+      [Allow this time] [Allow for this conversation] [Deny]
+
+<span class="k">lucy</span>  Playing Lonely At The Top by Asake on Study PC.
+<span class="k">face</span>  (^-^)  done</code></pre>
+  </section>
+
+  <section class="trust-strip">
+    <div class="container trust-grid">
+      <div><strong>The face follows the conversation</strong><span>A pure function of the stream. No component tells it what to feel.</span></div>
+      <div><strong>Nothing said twice</strong><span>Streaming text retires into the durable transcript item it becomes.</span></div>
+      <div><strong>Cards answered in place</strong><span>Allow once, for the conversation, for the profile, or always. Deny with a reason.</span></div>
+      <div><strong>The hub stays the authority</strong><span>The client renders; every yes is re-checked by the hub's own gate.</span></div>
+    </div>
+  </section>
+
+  <section class="section container" id="face">
+    <div class="section-heading">
+      <p class="eyebrow signal">The face</p>
+      <h2>Twelve moods, one rule: show what the conversation is doing.</h2>
+      <p>Asleep until you sign in. Attentive while you type. Thinking while a turn runs, working through results in a second gait, speaking while text streams. A warning look when a card needs you, success and failure when a turn ends, and a lost look when the connection drops.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card"><h3>Alive, not busy</h3><p>Blinks, eyes that follow your cursor, and idle motion come from the face itself; the moods come from the stream. The two never fight.</p></div>
+      <div class="feature-card"><h3>Reduced motion respected</h3><p>The face honours your system setting, and every mood change is also spoken to assistive technology as a sentence.</p></div>
+      <div class="feature-card"><h3>Swappable</h3><p>The face sits behind a one-method driver. The art is <a href="https://www.npmjs.com/package/agent-robot-avatar">Agent Robot Avatar</a> by CX ArtLab, MIT licensed; another face is a second driver, not a rewrite.</p></div>
+    </div>
+  </section>
+
+  <section class="section container" id="how">
+    <div class="section-heading">
+      <p class="eyebrow signal">What you see</p>
+      <h2>The whole conversation, not just the words.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-number">01</span>
+        <h3>The transcript, live</h3>
+        <p>Messages, each plan step with its note and timing, errors in their own voice, and text arriving as Lucy says it. Anything the client has no view for is shown generically, never dropped.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">02</span>
+        <h3>Approval cards</h3>
+        <p>The hub's own question, the permission, the exact calls. A standing yes can be limited to the values the card names: always, but only for this repository.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">03</span>
+        <h3>The window meter</h3>
+        <p>How full the context window is, with the same numbers the hub acts on, and a note when older turns are read as a summary.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="headed">
+    <div class="section-heading">
+      <p class="eyebrow signal">Headed mode</p>
+      <h2>Watch another program talk to Lucy.</h2>
+      <p>A coding agent can drive a conversation from a terminal while you watch it in the browser. Sessions it starts are badged, their messages are labelled, and Follow switches your screen to whatever is live, unless you are typing or deciding a card.</p>
+    </div>
+    <div class="command-row"><code>node scripts/headed.mjs new "refactor the parser"</code></div>
+    <div class="command-row"><code>node scripts/headed.mjs say ses_0192… "run the tests and tell me what breaks"</code></div>
+    <p class="install-note">When Lucy parks on an approval mid-task, the terminal is told the card is waiting in the UI, and the answer stays yours.</p>
+  </section>
+
+  <section class="section container" id="install">
+    <div class="section-heading">
+      <p class="eyebrow signal">Run it</p>
+      <h2>Three commands against a running hub.</h2>
+    </div>
+    <ol class="install-steps">
+      <li>Have the <a href="https://github.com/tochi-mba/LUCY-assistant">LUCY hub</a> running, on port 8000 or wherever <code>LUCY_URL</code> says.
+        <div class="command-row"><code>git clone https://github.com/tochi-mba/LUCY-ui && cd LUCY-ui && npm install</code></div>
+      </li>
+      <li>Start the client. It proxies the hub's paths, so the hub needs no CORS policy.
+        <div class="command-row"><code>npm run dev</code></div>
+      </li>
+      <li>Sign in without a password: the page shows a code, and a terminal already signed in approves it.
+        <div class="command-row"><code>lucy approve ABCD-EFGH</code></div>
+      </li>
+    </ol>
+    <p class="install-note">No hub nearby? <code>npm run dev:fake</code> serves the same client against a scripted hub with a music card to approve, a failing turn, and a self-approving sign-in.</p>
+  </section>
+
+  <section class="section container" id="safety">
+    <div class="section-heading">
+      <p class="eyebrow signal">Safety</p>
+      <h2>A client that renders, and nothing more.</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card"><h3>Tokens stay in the tab</h3><p>The sign-in lives in this tab's session storage, never a URL or a log. The chip counts its fifteen minutes down and signing in again keeps the page exactly as it was.</p></div>
+      <div class="feature-card"><h3>Lucy's words are untrusted</h3><p>Markdown renders with raw HTML escaped and unsafe link schemes refused; every link opens in a new tab that carries no opener.</p></div>
+      <div class="feature-card"><h3>The card shows the hub's question</h3><p>What you approve is the hub's description of the call, never a sentence a model composed, and the grant is re-checked by the hub before anything runs.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-wrap">
+    <span>© <span id="year">2026</span> REX Technologies · LUCY-ui</span>
+    <span>Face: <a href="https://www.npmjs.com/package/agent-robot-avatar">Agent Robot Avatar</a> by CX ArtLab, MIT. This client is MIT too.</span>
+    <span class="footer-links">
+      <a href="https://github.com/tochi-mba/LUCY-ui/blob/main/CHANGELOG.md">What's new <span aria-hidden="true">↗</span></a>
+      <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </span>
+  </div>
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>
