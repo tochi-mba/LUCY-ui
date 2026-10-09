@@ -84,7 +84,8 @@ async function read(
   cursor: { value: number | null },
   handlers: FollowHandlers,
 ): Promise<Ending> {
-  const reader = body.pipeThrough(new TextDecoderStream()).getReader();
+  const decode = new TextDecoderStream() as unknown as ReadableWritablePair<string, Uint8Array>;
+  const reader = body.pipeThrough(decode).getReader();
   const parser = new SseParser();
   try {
     for (;;) {
