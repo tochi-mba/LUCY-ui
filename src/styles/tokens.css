@@ -1,0 +1,22 @@
+/* LUCY-ui. The REX ink/signal palette shared across REX products; dark by design, never re-picked. */
+:root {
+  --ink: #080a09;
+  --panel: #111512;
+  --raised: #181e19;
+  --line: #29302a;
+  --text: #f2f5ee;
+  --muted: #858d83;
+  --signal: #d7ff3f;
+  --live: #ff774d;
+  --signal-wash: rgba(215, 255, 63, 0.1);
+  --live-wash: rgba(255, 119, 77, 0.12);
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+  --gutter: clamp(12px, 2.4vw, 24px);
+  --rail: 288px;
+  --drawer: 300px;
+  --font: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "Cascadia Mono", "SF Mono", Consolas, ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}

@@ -1,0 +1,21 @@
+.face {
+  display: grid;
+  place-items: center;
+}
+.face-stage {
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, rgba(215, 255, 63, 0.16), rgba(215, 255, 63, 0.03) 58%, transparent 72%);
+  transition: background 400ms ease;
+}
+.face[data-mood="needs_you"] .face-stage,
+.face[data-mood="blocked"] .face-stage,
+.face[data-mood="failed"] .face-stage,
+.face[data-mood="disconnected"] .face-stage {
+  background: radial-gradient(circle at 50% 45%, rgba(255, 119, 77, 0.22), rgba(255, 119, 77, 0.04) 58%, transparent 72%);
+}
+.face[data-mood="asleep"] .face-stage {
+  background: radial-gradient(circle at 50% 45%, rgba(133, 141, 131, 0.12), transparent 70%);
+}
