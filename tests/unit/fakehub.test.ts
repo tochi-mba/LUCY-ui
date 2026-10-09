@@ -1,7 +1,15 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { encodeFrame, FakeHub, fakeToken, fixtureFor, heartbeatFrame, OPENING } from "../../scripts/lib/fakehub.mjs";
+import {
+  accountOf,
+  encodeFrame,
+  FakeHub,
+  fakeToken,
+  fixtureFor,
+  heartbeatFrame,
+  OPENING,
+} from "../../scripts/lib/fakehub.mjs";
 import { isKnownEvent } from "../../src/protocol/events";
 import { expiryOf } from "../../src/protocol/jwt";
 import { SseParser } from "../../src/protocol/sse";
@@ -346,5 +354,29 @@ describe("odd scripts and odd input", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe("accounts", () => {
+  it("every approved device code is its own account, and sees only its own sessions", () => {
+    const { hub } = instantHub({ approvePolls: 1 });
+    const mint = () => {
+      const code = (hub.startDevice().body as { device_code: string }).device_code;
+      return (hub.pollDevice(code).body as { access_token: string }).access_token;
+    };
+    const first = accountOf(`Bearer ${mint()}`);
+    const second = accountOf(`Bearer ${mint()}`);
+    expect(first).not.toBe(second);
+    hub.createSession({ title: "mine" }, first);
+    expect((hub.listSessions(first).body as { data: unknown[] }).data).toHaveLength(1);
+    expect((hub.listSessions(second).body as { data: unknown[] }).data).toHaveLength(0);
+    expect(hub.me(first).body).toMatchObject({ account_id: first });
+  });
+
+  it("a token it did not mint, or none, is the default account", () => {
+    expect(accountOf("Bearer tok")).toBe("acct_fake");
+    expect(accountOf(undefined)).toBe("acct_fake");
+    expect(accountOf(`Bearer h.${Buffer.from("{}").toString("base64url")}.s`)).toBe("acct_fake");
+    expect(accountOf(`Bearer ${fakeToken(1, "acct_9")}`)).toBe("acct_9");
   });
 });

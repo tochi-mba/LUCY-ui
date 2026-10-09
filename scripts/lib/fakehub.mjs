@@ -20,12 +20,29 @@ export function fixtureFor(title, fixtures) {
   return fixtures.greeting;
 }
 
-/** A token shaped like keyring's: three dot-joined parts with an exp claim, signed by nobody. */
-export function fakeToken(expiresAtMs) {
+export const DEFAULT_ACCOUNT = "acct_fake";
+
+/** A token shaped like keyring's: three dot-joined parts with sub and exp claims, signed by nobody. */
+export function fakeToken(expiresAtMs, account = DEFAULT_ACCOUNT) {
   const payload = Buffer.from(
-    JSON.stringify({ sub: "acct_fake", aud: "lucy-api", exp: Math.round(expiresAtMs / 1000) }),
+    JSON.stringify({ sub: account, aud: "lucy-api", exp: Math.round(expiresAtMs / 1000) }),
   ).toString("base64url");
   return `eyJhbGciOiJub25lIn0.${payload}.fake`;
+}
+
+/**
+ * Whose request this is, from its Authorization header. Like the real hub, the bearer is the
+ * account; unlike it, nothing is verified. A token this hub did not mint is the default account,
+ * so a hand-made LUCY_TOKEN still works for smoke runs.
+ */
+export function accountOf(authorization) {
+  const token = /^Bearer (.+)$/.exec(authorization ?? "")?.[1] ?? "";
+  try {
+    const claims = JSON.parse(Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8"));
+    return typeof claims.sub === "string" ? claims.sub : DEFAULT_ACCOUNT;
+  } catch {
+    return DEFAULT_ACCOUNT;
+  }
 }
 
 export class FakeHub {
@@ -96,18 +113,23 @@ export class FakeHub {
     if (!code.approved && this.approvePolls > 0 && code.polls >= this.approvePolls) code.approved = true;
     if (!code.approved) return { status: 400, body: { error: "authorization_pending" } };
     this.devices.delete(deviceCode);
-    return { status: 200, body: { access_token: fakeToken(this.now() + 15 * 60 * 1000), token_type: "Bearer" } };
+    const account = this.#id("acct");
+    return {
+      status: 200,
+      body: { access_token: fakeToken(this.now() + 15 * 60 * 1000, account), token_type: "Bearer" },
+    };
   }
 
-  me() {
-    return { status: 200, body: { account_id: "acct_fake", audience: "lucy-api" } };
+  me(account = DEFAULT_ACCOUNT) {
+    return { status: 200, body: { account_id: account, audience: "lucy-api" } };
   }
 
   // ----- sessions ---------------------------------------------------------------------------
 
-  createSession(body) {
+  createSession(body, account = DEFAULT_ACCOUNT) {
     const id = this.#id("ses");
     const session = {
+      account,
       row: {
         id,
         profile: "personal",
@@ -141,11 +163,13 @@ export class FakeHub {
     return { status: 201, body: session.row };
   }
 
-  listSessions() {
+  listSessions(account = DEFAULT_ACCOUNT) {
     return {
       status: 200,
       body: {
-        data: [...this.sessions.values()].map((session) => session.row),
+        data: [...this.sessions.values()]
+          .filter((session) => session.account === account)
+          .map((session) => session.row),
         has_more: false,
         first_id: null,
         last_id: null,

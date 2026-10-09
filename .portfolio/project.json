@@ -1,0 +1,21 @@
+{
+  "$schema": "https://tochi-mba.github.io/schema/project.schema.json",
+  "slug": "lucy-ui",
+  "name": "LUCY-ui",
+  "tagline": "Lucy's face: a browser client for the LUCY hub with an expressive face, streamed text and approval cards.",
+  "description": "The LUCY hub's web client. An animated face whose mood is a pure function of the conversation's event stream, a transcript that streams Lucy's words in and never says anything twice, and approval cards answered in place, including a standing yes limited to the values the card names. It reads the hub's native resumable event stream and needs no change to the hub. A headed mode lets a coding agent drive a conversation from a terminal while a person watches it, and answers its approval cards, in the browser.",
+  "highlights": [
+    "A face whose twelve moods are derived from the hub's event stream, never set by hand",
+    "Resumable streaming: reconnects from the last event handled, so nothing is shown twice",
+    "Approval cards with once, conversation, profile and always, limited to chosen values",
+    "Headed mode: a terminal drives Lucy, the browser follows and answers the card",
+    "Every module at 100% coverage; end-to-end tests in three engines against a fake hub"
+  ],
+  "stack": ["Vue 3", "TypeScript", "Vite", "Vitest", "Playwright", "SSE"],
+  "category": "ai",
+  "family": "lucy",
+  "role": "client",
+  "status": "active",
+  "order": 15,
+  "display": true
+}

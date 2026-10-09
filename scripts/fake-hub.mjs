@@ -10,7 +10,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { encodeFrame, FakeHub, heartbeatFrame, OPENING } from "./lib/fakehub.mjs";
+import { accountOf, encodeFrame, FakeHub, heartbeatFrame, OPENING } from "./lib/fakehub.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(here, "..", "fixtures", "conversations");
@@ -53,9 +53,11 @@ const server = createServer(async (request, response) => {
     const asked = await body(request);
     return json(response, hub.decideDevice(asked.user_code, asked.approve !== false));
   }
-  if (method === "GET" && path === "/v1/me") return json(response, hub.me());
-  if (method === "GET" && path === "/v1/sessions") return json(response, hub.listSessions());
-  if (method === "POST" && path === "/v1/sessions") return json(response, hub.createSession(await body(request)));
+  const account = accountOf(request.headers.authorization);
+  if (method === "GET" && path === "/v1/me") return json(response, hub.me(account));
+  if (method === "GET" && path === "/v1/sessions") return json(response, hub.listSessions(account));
+  if (method === "POST" && path === "/v1/sessions")
+    return json(response, hub.createSession(await body(request), account));
 
   const parts = path.split("/").filter(Boolean);
   if (parts[0] === "v1" && parts[1] === "sessions" && parts[2] !== undefined) {

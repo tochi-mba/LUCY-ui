@@ -71,7 +71,7 @@ async function create(title: string): Promise<void> {
       />
       <RouterView />
     </div>
-    <p v-if="sessions.state.error" class="shell-error" role="alert">{{ sessions.state.error }}</p>
+    <p v-if="sessions.state.error" class="shell-error" role="alert" aria-live="assertive">{{ sessions.state.error }}</p>
     <SignInDialog :auth="core.auth" />
   </div>
 </template>

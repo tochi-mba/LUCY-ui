@@ -61,7 +61,7 @@ function answer(approvalId: string, choice: Choice): void {
 </script>
 
 <template>
-  <div class="session">
+  <main class="session" aria-label="Conversation">
     <section class="stage">
       <LucyFace :mood="mood" :size="148" />
       <div class="stage-title">
@@ -86,5 +86,5 @@ function answer(approvalId: string, choice: Choice): void {
     />
 
     <SidePanel :conversation="state" @cancel="conversation.cancel()" />
-  </div>
+  </main>
 </template>
