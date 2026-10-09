@@ -116,13 +116,9 @@ if ("error" in asked) {
 }
 
 if (asked.command === "new") {
-  const topic = asked.topic || "conversation";
-  const session = await call(
-    "POST",
-    "/v1/sessions",
-    { title: (HEADED_PREFIX + topic).slice(0, 200) },
-    { "Idempotency-Key": crypto.randomUUID() },
-  );
+  const session = await call("POST", "/v1/sessions", sessionBody(asked.topic, process.env, HEADED_PREFIX), {
+    "Idempotency-Key": crypto.randomUUID(),
+  });
   console.error(`created "${session.title}"`);
   console.log(session.id);
   process.exit(OK);

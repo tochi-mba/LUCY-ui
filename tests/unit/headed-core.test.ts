@@ -12,6 +12,7 @@ import {
   parseArgs,
   REFUSED,
   ReplyCollector,
+  sessionBody,
   tokenFromToml,
   UNREACHABLE,
   USAGE,
@@ -149,5 +150,15 @@ describe("watch lines", () => {
     expect(watchLine({ type: "lucy.stream.snapshot", data: { big: "x".repeat(400) } })).toHaveLength(
       "- lucy.stream.snapshot ".length + 160,
     );
+  });
+});
+
+describe("starting a headed conversation", () => {
+  it("titles it with the prefix and passes LUCY_MODEL when set", () => {
+    expect(sessionBody("smoke", {}, "Claude Code · ")).toEqual({ title: "Claude Code · smoke" });
+    expect(sessionBody("", { LUCY_MODEL: "clyde:haiku" }, "Claude Code · ")).toEqual({
+      title: "Claude Code · conversation",
+      model: "clyde:haiku",
+    });
   });
 });

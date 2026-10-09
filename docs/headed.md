@@ -27,6 +27,8 @@ terminal while a person watches it, and answers its approval cards, in the brows
 
 ## Where the token comes from
 
+`LUCY_MODEL` picks the model a `new` conversation runs on (live tests use `clyde:haiku`); without it the hub's default applies.
+
 `LUCY_TOKEN` if it is set, otherwise the token `lucy setup` saved, found by the CLI's own rules:
 `LUCY_CONFIG`, then `$XDG_CONFIG_HOME/lucy/config.toml`, then `%APPDATA%\lucy\config.toml` on
 Windows, then `~/.config/lucy/config.toml`. The hub is `LUCY_URL`, default

@@ -102,6 +102,16 @@ export class ReplyCollector {
   }
 }
 
+/**
+ * The body that starts a headed conversation. LUCY_MODEL picks the model (live tests run on the
+ * weakest one, `clyde:haiku`); without it the hub's own default applies.
+ */
+export function sessionBody(topic, env, prefix) {
+  const body = { title: (prefix + (topic || "conversation")).slice(0, 200) };
+  if (env.LUCY_MODEL) body.model = env.LUCY_MODEL;
+  return body;
+}
+
 /** One stream event as one line for `headed watch`. */
 export function watchLine(event) {
   const turn = event.turn_id ? ` ${event.turn_id}` : "";
