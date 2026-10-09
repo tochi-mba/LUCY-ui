@@ -237,9 +237,23 @@ export function reduce(state: ConversationState, event: LucyEvent, now: number):
   }
 }
 
-/** Put a page of history in place. Items already on screen are replaced, never doubled. */
+/**
+ * Put a page of history in place. Items already on screen are replaced, never doubled.
+ *
+ * One merge per page: the page and what is on screen are combined and sorted once. Placing each
+ * item with a scan of everything already there made scrolling back through a long conversation
+ * quadratic (47 ms for 2,000 items, about a second at 10,000).
+ */
 export function upsertItems(state: ConversationState, items: readonly Item[]): void {
-  for (const item of items) addItem(state, item, false);
+  if (items.length === 0) return;
+  const incoming = new Map(items.map((item) => [item.id, item]));
+  const kept = state.items.filter((existing) => !incoming.has(existing.id));
+  state.items = kept.concat([...incoming.values()]).sort(bySeq);
+  for (const item of items) afterItem(state, item, false);
+}
+
+function bySeq(a: Item, b: Item): number {
+  return a.seq - b.seq;
 }
 
 function applySnapshot(state: ConversationState, data: JsonRecord): void {
@@ -257,14 +271,34 @@ function applySnapshot(state: ConversationState, data: JsonRecord): void {
 }
 
 function addItem(state: ConversationState, item: Item, live: boolean): void {
-  const index = state.items.findIndex((existing) => existing.id === item.id);
-  if (index >= 0) {
-    state.items[index] = item;
-  } else {
-    const at = state.items.findIndex((existing) => existing.seq > item.seq);
-    if (at === -1) state.items.push(item);
-    else state.items.splice(at, 0, item);
+  place(state.items, item);
+  afterItem(state, item, live);
+}
+
+/**
+ * One item into a list kept in seq order, by binary search. An item's seq never changes, so an
+ * item seen again is found among the rows with its seq and replaced, never doubled.
+ */
+function place(items: Item[], item: Item): void {
+  let low = 0;
+  let high = items.length;
+  while (low < high) {
+    const middle = (low + high) >>> 1;
+    if (items[middle]!.seq < item.seq) low = middle + 1;
+    else high = middle;
   }
+  let at = low;
+  for (; at < items.length && items[at]!.seq === item.seq; at += 1) {
+    if (items[at]!.id === item.id) {
+      items[at] = item;
+      return;
+    }
+  }
+  items.splice(at, 0, item);
+}
+
+/** What an item means beyond its row: a retired block, a recorded answer, a pending card. */
+function afterItem(state: ConversationState, item: Item, live: boolean): void {
   if (item.type === "message" && item.role === "assistant") retireText(state, item.turn_id);
   if (item.type === "approval_response") {
     const response = approvalResponseOf(item.content);
