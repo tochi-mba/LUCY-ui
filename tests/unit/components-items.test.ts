@@ -114,3 +114,26 @@ describe("ErrorItem and GenericItem", () => {
     expect(wrapper.find("pre").text()).toContain('"covered": 4');
   });
 });
+
+describe("StreamingText, in parts", () => {
+  it("re-renders only the tail while a paragraph is arriving, and settles it when the paragraph ends", async () => {
+    // The bug, named: every frame re-parsed the whole answer (4 ms for 5 KB), so a long answer
+    // missed the frame budget while it streamed.
+    const block = { key: "k", id: "b", kind: "text" as const, turnId: null, text: "First.\n\nSec", open: true };
+    const wrapper = mount(StreamingText, { props: { block } });
+    const settled = wrapper.find('[data-part="settled"]');
+    expect(settled.text()).toBe("First.");
+    expect(wrapper.find('[data-part="tail"]').text()).toBe("Sec");
+    const before = settled.element.innerHTML;
+
+    await wrapper.setProps({ block: { ...block, text: "First.\n\nSecond is longer" } });
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    expect(wrapper.find('[data-part="settled"]').element.innerHTML).toBe(before);
+    expect(wrapper.find('[data-part="tail"]').text()).toBe("Second is longer");
+
+    await wrapper.setProps({ block: { ...block, text: "First.\n\nSecond is done.\n\nThird" } });
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    expect(wrapper.find('[data-part="settled"]').text()).toContain("Second is done.");
+    expect(wrapper.find('[data-part="tail"]').text()).toBe("Third");
+  });
+});
