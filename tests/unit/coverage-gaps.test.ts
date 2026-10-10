@@ -14,7 +14,7 @@ import GenericItem from "../../src/components/GenericItem.vue";
 import SidePanel from "../../src/components/SidePanel.vue";
 import SignInChip from "../../src/components/SignInChip.vue";
 import StreamingText from "../../src/components/StreamingText.vue";
-import { AvatarDriver, type AvatarElement } from "../../src/face/driver";
+import { AvatarDriver, type AvatarElement, HOLD_MS } from "../../src/face/driver";
 import { forgetFace, registerFace } from "../../src/face/register";
 import type { LucyEvent } from "../../src/protocol/events";
 import type { Item } from "../../src/protocol/items";
@@ -133,7 +133,9 @@ describe("the default seams", () => {
     driver.set("done");
     driver.set("idle");
     expect(calls).toEqual(["success"]);
-    await vi.waitFor(() => expect(calls).toContain("reset"));
+    // Real timers: waitFor's default second left 100 ms of slack over the hold, which a busy
+    // machine used up (it failed at 2.35 s). Several holds of room keep it about the hold alone.
+    await vi.waitFor(() => expect(calls).toContain("reset"), { timeout: HOLD_MS * 6 });
     driver.set("failed");
     driver.destroy();
   });
