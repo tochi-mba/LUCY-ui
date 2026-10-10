@@ -77,6 +77,39 @@ describe("items", () => {
     const state = fresh([event("lucy.content.item.added", { nonsense: true })]);
     expect(state.items).toHaveLength(0);
   });
+
+  it("scrolls back through a long conversation a page at a time, ordered and never doubled", () => {
+    // The bug, named: each item was placed with a scan of everything on screen, so scrolling back
+    // was quadratic (47 ms for 2,000 items). A page is now one merge; a live item one search.
+    const state = fresh();
+    const all = Array.from({ length: 2000 }, (_, i) => item({ id: `i${i}`, seq: i + 1 }));
+    for (let end = all.length; end > 0; end -= 100) {
+      upsertItems(state, all.slice(Math.max(0, end - 100), end).reverse());
+      if (end === 1000) reduce(state, event("lucy.content.item.added", all[1500]!), NOW);
+    }
+    expect(state.items).toHaveLength(2000);
+    expect(state.items.every((row, i) => row.seq === i + 1)).toBe(true);
+  });
+
+  it("an empty page changes nothing", () => {
+    const state = fresh();
+    upsertItems(state, [item({ id: "a", seq: 1 })]);
+    const before = state.items;
+    upsertItems(state, []);
+    expect(state.items).toBe(before);
+  });
+
+  it("a live item lands after rows sharing its seq, and replaces its own row among them", () => {
+    const state = fresh();
+    upsertItems(state, [item({ id: "a", seq: 1 }), item({ id: "b", seq: 2 }), item({ id: "d", seq: 3 })]);
+    reduce(state, event("lucy.content.item.added", item({ id: "c", seq: 2 })), NOW);
+    expect(state.items.map((row) => row.id)).toEqual(["a", "b", "c", "d"]);
+    reduce(state, event("lucy.content.item.added", item({ id: "c", seq: 2, content: "again" })), NOW);
+    expect(state.items.map((row) => row.id)).toEqual(["a", "b", "c", "d"]);
+    expect(state.items[2]!.content).toBe("again");
+    reduce(state, event("lucy.content.item.added", item({ id: "z", seq: 9 })), NOW);
+    expect(state.items.at(-1)!.id).toBe("z");
+  });
 });
 
 describe("streamed text", () => {
