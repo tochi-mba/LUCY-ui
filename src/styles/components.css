@@ -616,3 +616,8 @@
 .dialog-close {
   justify-self: end;
 }
+
+/* A streaming answer is drawn in two parts, settled and tail; to the layout they are one flow. */
+.markdown-part {
+  display: contents;
+}
