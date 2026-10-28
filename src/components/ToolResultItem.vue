@@ -20,7 +20,9 @@ const duration = computed(() => {
     <summary>
       <span class="tool-dot" :class="{ failed }" aria-hidden="true" />
       <code class="tool-op">{{ step.operation }}</code>
-      <span class="tool-note">{{ step.note || step.operation }}</span>
+      <!-- The operation is already named beside it, so an empty note shows nothing
+           rather than the operation twice ("workspace.write workspace.write"). -->
+      <span v-if="step.note" class="tool-note">{{ step.note }}</span>
       <span v-if="untrusted" class="tool-trust" :title="`Reported by ${step.source}, from somewhere anyone can write`">untrusted</span>
       <span v-if="duration" class="tool-time">{{ duration }}</span>
     </summary>
