@@ -7,23 +7,14 @@
  */
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer, request as forward } from "node:http";
-import { extname, join, normalize, resolve } from "node:path";
+import { extname, join, normalize, relative, resolve } from "node:path";
+import { createBrotliCompress, createGzip } from "node:zlib";
+import { cacheFor, encodingFor, typeFor } from "./lib/static.mjs";
 
 const dist = resolve(process.argv[2] ?? "dist");
 const port = Number(process.argv[3] ?? process.env.PORT ?? 4173);
 const hub = new URL(process.env.LUCY_URL ?? "http://127.0.0.1:8000");
 const HUB_PATHS = ["/v1/", "/healthy", "/ready", "/device"];
-
-const TYPES = {
-  ".html": "text/html; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".svg": "image/svg+xml",
-  ".json": "application/json",
-  ".map": "application/json",
-  ".png": "image/png",
-  ".woff2": "font/woff2",
-};
 
 createServer((incoming, outgoing) => {
   const path = new URL(incoming.url, "http://x").pathname;
@@ -52,8 +43,19 @@ createServer((incoming, outgoing) => {
   const safe = normalize(path).replace(/^([/\\])+|\.\./g, "");
   let file = join(dist, safe);
   if (!existsSync(file) || statSync(file).isDirectory()) file = join(dist, "index.html");
-  outgoing.writeHead(200, { "Content-Type": TYPES[extname(file)] ?? "application/octet-stream" });
-  createReadStream(file).pipe(outgoing);
+  const extension = extname(file);
+  const encoding = encodingFor(incoming.headers["accept-encoding"], extension);
+  const headers = {
+    "Content-Type": typeFor(extension),
+    "Cache-Control": cacheFor(relative(dist, file).replaceAll("\\", "/")),
+    Vary: "Accept-Encoding",
+  };
+  if (encoding !== null) headers["Content-Encoding"] = encoding;
+  outgoing.writeHead(200, headers);
+  const body = createReadStream(file);
+  if (encoding === "br") body.pipe(createBrotliCompress()).pipe(outgoing);
+  else if (encoding === "gzip") body.pipe(createGzip()).pipe(outgoing);
+  else body.pipe(outgoing);
 }).listen(port, "127.0.0.1", () => {
   console.log(`serving ${dist} on http://127.0.0.1:${port}, hub at ${hub.origin}`);
 });
