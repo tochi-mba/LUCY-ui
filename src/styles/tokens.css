@@ -16,7 +16,7 @@
   --gutter: clamp(12px, 2.4vw, 24px);
   --rail: 288px;
   --drawer: 300px;
-  --font: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --mono: "Cascadia Mono", "SF Mono", Consolas, ui-monospace, Menlo, monospace;
+  --font: "Inter Variable", Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono Variable", "Cascadia Mono", "SF Mono", Consolas, ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
