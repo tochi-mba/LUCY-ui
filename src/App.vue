@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch } from "vue";
+import { computed, onBeforeUnmount, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { SHELL, useCore } from "./app/context";
 import SessionRail from "./components/SessionRail.vue";
@@ -32,6 +32,13 @@ watch(
   },
   { deep: false },
 );
+
+// The phone drawer closes on Esc as well as on the scrim.
+function onKey(event: KeyboardEvent): void {
+  if (event.key === "Escape") railOpen.value = false;
+}
+window.addEventListener("keydown", onKey);
+onBeforeUnmount(() => window.removeEventListener("keydown", onKey));
 
 function open(id: string): void {
   railOpen.value = false;
@@ -68,6 +75,13 @@ async function create(title: string): Promise<void> {
         @create="create"
         @archive="(id) => sessions.archive(id)"
         @update:follow="(on) => (follow = on)"
+      />
+      <button
+        v-if="railOpen"
+        type="button"
+        class="rail-scrim"
+        aria-label="Close conversations"
+        @click="railOpen = false"
       />
       <RouterView />
     </div>
