@@ -111,7 +111,10 @@ describe("ToolResultItem, framed", () => {
         }),
       },
     });
-    expect(wrapper.find(".tool-note").text()).toBe("workspace.run");
+    // The bug, named: with no note the row read "workspace.run workspace.run", the
+    // operation from its own code element and again from the note's fallback.
+    expect(wrapper.find(".tool-note").exists()).toBe(false);
+    expect(wrapper.findAll(".tool-op")).toHaveLength(1);
     expect(wrapper.text()).not.toContain("<result");
     expect(wrapper.text()).not.toContain("Reported by");
     expect(wrapper.find(".tool-body").text()).toContain('"work_id": "wrk_1"');
