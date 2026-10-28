@@ -88,6 +88,22 @@ describe("the shell", () => {
     expect(wrapper.find(".body").attributes("data-rail-open")).toBe("false");
   });
 
+  it("closes the phone rail from its scrim and from Esc, and only Esc", async () => {
+    const { wrapper } = await mountApp([session("ses_a", { title: "Music" })]);
+    expect(wrapper.find(".rail-scrim").exists()).toBe(false);
+    await wrapper.find(".rail-toggle").trigger("click");
+    await wrapper.find(".rail-scrim").trigger("click");
+    expect(wrapper.find(".body").attributes("data-rail-open")).toBe("false");
+    await wrapper.find(".rail-toggle").trigger("click");
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find(".body").attributes("data-rail-open")).toBe("true");
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find(".body").attributes("data-rail-open")).toBe("false");
+    wrapper.unmount();
+  });
+
   it("creates a conversation from the rail and navigates to it", async () => {
     const { wrapper, router } = await mountApp();
     await wrapper.find(".rail-head button").trigger("click");

@@ -146,7 +146,9 @@
     grid-template-columns: 1fr;
     position: relative;
   }
-  .rail {
+  /* `.body .rail`, not `.rail`: components.css loads after this file and its `.rail` rule
+     won, so the list never hid and covered the top of every phone screen. */
+  .body .rail {
     display: none;
   }
   .body[data-rail-open="true"] .rail {
@@ -159,10 +161,31 @@
     border-right: 1px solid var(--line);
     box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
   }
+  .rail-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    border: 0;
+    background: rgba(4, 5, 4, 0.64);
+    cursor: pointer;
+  }
+  .topbar {
+    gap: 8px;
+  }
+  /* The brand, the Face link and the account name made the bar wider than a phone. */
+  .brand-company,
+  .topbar-link,
+  .chip-who {
+    display: none;
+  }
   .stage {
     gap: 12px;
+    padding-top: 8px;
+    padding-bottom: 6px;
   }
-  .face-stage {
-    padding: 8px;
+  .stage .face-stage {
+    padding: 4px;
+    transform: scale(0.55);
+    margin: -32px;
   }
 }
