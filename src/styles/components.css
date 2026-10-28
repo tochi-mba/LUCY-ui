@@ -621,3 +621,26 @@
 .markdown-part {
   display: contents;
 }
+
+/* A step's result, read: indented JSON scrolls rather than wrapping into a wall. */
+.tool-body {
+  font-family: var(--mono);
+  font-size: 12px;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre;
+}
+.tool-trust {
+  flex: none;
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.tool-notices {
+  margin: 0;
+  padding: 0 12px 10px 44px;
+  color: var(--muted);
+  font-size: 12px;
+}
