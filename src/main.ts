@@ -5,6 +5,9 @@ import { createAuth } from "./auth/auth";
 import { sessionTokenStore } from "./auth/tokenStore";
 import { makeRouter } from "./router";
 import { HttpTransport } from "./transport/http";
+// Self-hosted: Google Fonts held the first paint for about half a second on every cold load.
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/face.css";
