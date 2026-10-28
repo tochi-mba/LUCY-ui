@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { type Item, toolResultOf } from "../protocol/items";
+import { type Item, readableBody, toolResultOf } from "../protocol/items";
 
 const props = defineProps<{ item: Item }>();
 const step = computed(() => toolResultOf(props.item.content));
 const failed = computed(() => step.value.status === "failed" || step.value.error !== "");
+const shown = computed(() => readableBody(step.value.body));
+/** Said only when a result came from somewhere anyone can write to, the case worth noticing. */
+const untrusted = computed(() => step.value.trust === "untrusted");
 const duration = computed(() => {
   const ms = step.value.duration_ms;
   if (ms === null) return "";
@@ -17,11 +20,15 @@ const duration = computed(() => {
     <summary>
       <span class="tool-dot" :class="{ failed }" aria-hidden="true" />
       <code class="tool-op">{{ step.operation }}</code>
-      <span class="tool-note">{{ step.note || step.summary }}</span>
+      <span class="tool-note">{{ step.note || step.operation }}</span>
+      <span v-if="untrusted" class="tool-trust" :title="`Reported by ${step.source}, from somewhere anyone can write`">untrusted</span>
       <span v-if="duration" class="tool-time">{{ duration }}</span>
     </summary>
-    <p v-if="step.summary" class="tool-summary">{{ step.summary }}</p>
+    <pre v-if="step.body" class="tool-summary tool-body">{{ shown }}</pre>
     <p v-if="step.error" class="tool-error">{{ step.error }}</p>
-    <p v-if="!step.summary && !step.error" class="tool-summary">This step reported nothing beyond its status.</p>
+    <p v-if="!step.body && !step.error" class="tool-summary">This step reported nothing beyond its status.</p>
+    <ul v-if="step.notices.length" class="tool-notices">
+      <li v-for="(notice, i) in step.notices" :key="i">{{ notice }}</li>
+    </ul>
   </details>
 </template>

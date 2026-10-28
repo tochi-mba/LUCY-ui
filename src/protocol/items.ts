@@ -126,18 +126,65 @@ export interface ToolResult {
   summary: string;
   error: string;
   duration_ms: number | null;
+  /** What the step returned, without the frame the hub wraps it in for the model. */
+  body: string;
+  /** Who the hub says reported it, and how far to trust it, when the summary was framed. */
+  source: string;
+  trust: string;
+  notices: string[];
 }
 
 export function toolResultOf(content: unknown): ToolResult {
   const body = isRecord(content) ? content : {};
+  const summary = text(body.summary);
+  const framed = unframe(summary);
   return {
     operation: text(body.operation, "a step"),
     status: text(body.status, "unknown"),
     note: text(body.note),
-    summary: text(body.summary),
+    summary,
     error: text(body.error),
     duration_ms: number(body.duration_ms),
+    body: framed?.body ?? summary,
+    source: framed?.source ?? "",
+    trust: framed?.trust ?? "",
+    notices: texts(body.notices),
   };
+}
+
+const RESULT_OPEN = /^<result source="([^"<>]*)" trust="([^"<>]*)">$/;
+const INDENT = "  ";
+
+/**
+ * The hub's own frame taken off a step's summary (`context/framing.py` `unframe_result`, read
+ * the same way): the exact opening tag, the closing "Reported by" sentence and the indent, once,
+ * from the outside. Anything inside, an imitation frame included, stays as it was. `null` when
+ * the summary is not framed.
+ */
+export function unframe(summary: string): { source: string; trust: string; body: string } | null {
+  const lines = summary.split("\n");
+  // `split` always gives a first line, and a match always has both groups.
+  const open = RESULT_OPEN.exec(lines[0] as string) as [string, string, string] | null;
+  if (open === null || lines.at(-1) !== "</result>") return null;
+  let body = lines.slice(1, -1);
+  if (body.at(-1)?.startsWith(`${INDENT}Reported by `)) body = body.slice(0, -1);
+  return {
+    source: open[1],
+    trust: open[2],
+    body: body
+      .map((line) => (line.startsWith(INDENT) ? line.slice(INDENT.length) : line))
+      .join("\n")
+      .trim(),
+  };
+}
+
+/** A result body as a person reads it: JSON indented, anything else as it came. */
+export function readableBody(body: string): string {
+  try {
+    return JSON.stringify(JSON.parse(body), null, 2);
+  } catch {
+    return body;
+  }
 }
 
 /** An `error` item: a code the hub chose and a sentence for the person. */
