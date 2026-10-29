@@ -30,6 +30,8 @@ export interface AuthState {
   codeExpiresAt: number | null;
   error: string | null;
   dialogOpen: boolean;
+  /** The hub refused the token (or it ran out). Everything that polls with it pauses. */
+  refused: boolean;
 }
 
 export interface AuthDeps {
@@ -53,6 +55,7 @@ export function createAuth(deps: AuthDeps) {
     codeExpiresAt: null,
     error: null,
     dialogOpen: false,
+    refused: false,
   });
   // Each start of the flow gets a number; a poll that finds a newer number has been abandoned.
   let generation = 0;
@@ -63,6 +66,7 @@ export function createAuth(deps: AuthDeps) {
     state.token = token;
     state.expiresAt = expiresAt;
     state.phase = "signed_in";
+    state.refused = false;
     return true;
   }
 
@@ -192,11 +196,17 @@ export function createAuth(deps: AuthDeps) {
       codeExpiresAt: null,
       error: null,
       dialogOpen: true,
+      refused: false,
     } satisfies AuthState);
   }
 
-  /** The hub refused the token: ask again, keeping everything on screen as it is. */
+  /** The hub refused the token: ask again, keeping everything on screen as it is.
+   *
+   * `refused` pauses everything that polls with the token. Found live: an expired sign-in
+   * left the session list retrying every few seconds, a fresh 401 each time, for as long
+   * as the dialog sat open. */
   function requireSignIn(): void {
+    state.refused = true;
     state.dialogOpen = true;
   }
 

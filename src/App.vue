@@ -14,7 +14,8 @@ const router = useRouter();
 
 const follow = ref(false);
 const busy = ref(false);
-const signedIn = computed(() => core.auth.state.phase === "signed_in");
+// Signed in AND the hub still takes the token: a refused sign-in pauses the polling.
+const signedIn = computed(() => core.auth.state.phase === "signed_in" && !core.auth.state.refused);
 const sessions = useSessions(core.transport, { enabled: signedIn, follow });
 provide(SHELL, { sessions, follow, busy });
 
