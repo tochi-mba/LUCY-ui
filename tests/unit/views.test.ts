@@ -112,7 +112,7 @@ describe("FaceLab", () => {
       },
     });
     expect(wrapper.findAll(".lab-moods button").length).toBeGreaterThan(10);
-    await wrapper.findAll(".lab-moods button").at(4)!.trigger("click");
+    await wrapper.findAll(".lab-moods button").at(5)!.trigger("click");
     expect(wrapper.find(".lab-now").text()).toContain("thinking");
     expect(wrapper.find(".face-stub").attributes("data-mood")).toBe("thinking");
   });
@@ -175,6 +175,30 @@ describe("HomeView", () => {
     });
     expect(wrapper.text()).toContain("asleep");
     expect(wrapper.find("form").exists()).toBe(false);
+  });
+
+  it("lets the face rest after a quiet minute and wakes it on typing", async () => {
+    vi.useFakeTimers();
+    try {
+      const core = coreWith(new FakeTransport());
+      const router = createRouter({ history: createMemoryHistory(), routes });
+      const wrapper = mount(HomeView, {
+        global: {
+          plugins: [router],
+          provide: { [CORE as symbol]: core, [SHELL as symbol]: shellWith(core) },
+          stubs: { LucyFace: { props: ["mood"], template: "<div class='face-stub' :data-mood='mood' />" } },
+        },
+      });
+      const face = () => wrapper.find(".face-stub").attributes("data-mood");
+      expect(face()).toBe("idle");
+      await vi.advanceTimersByTimeAsync(65_000);
+      expect(face()).toBe("resting");
+      await wrapper.find("input").setValue("h");
+      expect(face()).not.toBe("resting");
+      wrapper.unmount();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

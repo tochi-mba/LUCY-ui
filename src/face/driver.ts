@@ -85,13 +85,14 @@ export class AvatarDriver implements FaceDriver {
   #leave(mood: Mood | null): void {
     if (mood === "thinking" || mood === "working") settle(this.#face.stopWaiting());
     else if (mood === "attentive" || mood === "speaking") settle(this.#face.input(false));
-    else if (mood === "asleep") settle(this.#face.wake());
+    else if (mood === "asleep" || mood === "resting") settle(this.#face.wake());
   }
 
   #enter(mood: Mood): void {
     const face = this.#face;
     switch (mood) {
       case "asleep":
+      case "resting":
         settle(face.sleep());
         return;
       case "idle":

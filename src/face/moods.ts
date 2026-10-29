@@ -11,6 +11,7 @@ import type { StreamState } from "../transport/types";
 
 export type Mood =
   | "asleep"
+  | "resting"
   | "idle"
   | "attentive"
   | "sent"
@@ -25,6 +26,7 @@ export type Mood =
 
 export const MOODS: readonly Mood[] = [
   "asleep",
+  "resting",
   "idle",
   "attentive",
   "sent",
@@ -41,6 +43,15 @@ export const MOODS: readonly Mood[] = [
 /** How long the face holds a turn's ending before it settles. */
 export const OUTCOME_MS = 4000;
 
+/**
+ * How long nothing has to happen before an idle face dozes off.
+ *
+ * Awake, the face redraws thirty times a second whether or not anything changes; measured on a
+ * conversation left open, that was 13 to 25 seconds of main-thread time a minute. Dozing puts the
+ * avatar to sleep, which stops its frame loop entirely, and the next thing that happens wakes it.
+ */
+export const REST_AFTER_MS = 60_000;
+
 export interface MoodInput {
   signedIn: boolean;
   hasSession: boolean;
@@ -53,13 +64,15 @@ export interface MoodInput {
   composing: boolean;
   outcome: Outcome | null;
   now: number;
+  /** Milliseconds since anything last happened on screen: an event, a keystroke, a mood. */
+  quietFor: number;
 }
 
 const LOST: ReadonlySet<StreamState> = new Set(["reconnecting", "unauthorized", "closed"]);
 
 export function moodFor(input: MoodInput): Mood {
   if (!input.signedIn) return "asleep";
-  if (!input.hasSession) return input.composing ? "attentive" : "idle";
+  if (!input.hasSession) return input.composing ? "attentive" : settled(input);
   if (LOST.has(input.stream)) return "disconnected";
   if (input.pendingCards > 0 || input.connectionNeeded) return "needs_you";
   if (input.turn === "input_required" || input.turn === "auth_required") return "needs_you";
@@ -67,12 +80,18 @@ export function moodFor(input: MoodInput): Mood {
   if (input.turn === "queued") return "sent";
   if (input.turn === "running") return input.working ? "working" : "thinking";
   if (input.outcome !== null && input.now - input.outcome.at < OUTCOME_MS) return input.outcome.kind;
-  return input.composing ? "attentive" : "idle";
+  return input.composing ? "attentive" : settled(input);
+}
+
+/** Idle, or resting once nothing has happened for a while. */
+function settled(input: MoodInput): Mood {
+  return input.quietFor >= REST_AFTER_MS ? "resting" : "idle";
 }
 
 /** The sentence a screen reader hears when the face changes. */
 export const MOOD_TEXT: Record<Mood, string> = {
   asleep: "Lucy is asleep. Sign in to wake her.",
+  resting: "Lucy is resting. She wakes when you type or something happens.",
   idle: "Lucy is listening.",
   attentive: "Lucy is watching you type.",
   sent: "Lucy has your message.",

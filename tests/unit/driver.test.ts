@@ -57,6 +57,14 @@ describe("driving the face", () => {
     expect(calls).toEqual(["sleep", "wake", "reset"]);
   });
 
+  it("rests the way it sleeps, so the frame loop stops, and wakes from it", () => {
+    const { driver, calls } = build();
+    driver.set("idle");
+    driver.set("resting");
+    driver.set("attentive");
+    expect(calls).toEqual(["reset", "sleep", "wake", "input:true"]);
+  });
+
   it("holds a short animation and then shows only the latest waiting mood", () => {
     const { driver, calls, fire } = build();
     driver.set("sent");

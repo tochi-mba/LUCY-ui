@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onScopeDispose, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCore, useShell } from "../app/context";
 import LucyFace from "../face/LucyFace.vue";
@@ -11,6 +11,19 @@ const router = useRouter();
 
 const composing = ref(false);
 const draft = ref("");
+
+// Home has no events, so only typing counts as something happening; the face dozes after a
+// quiet minute here too.
+const now = ref(Date.now());
+const lastActivity = ref(Date.now());
+const tick = setInterval(() => {
+  now.value = Date.now();
+}, 5000);
+onScopeDispose(() => clearInterval(tick));
+watch([composing, draft], () => {
+  lastActivity.value = Date.now();
+  now.value = lastActivity.value;
+});
 
 const mood = computed(() =>
   moodFor({
@@ -24,7 +37,8 @@ const mood = computed(() =>
     working: false,
     composing: composing.value,
     outcome: null,
-    now: 0,
+    now: now.value,
+    quietFor: now.value - lastActivity.value,
   }),
 );
 
