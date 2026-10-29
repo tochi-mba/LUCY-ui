@@ -141,5 +141,10 @@ export function useConversation(transport: LucyTransport, sessionId: Ref<string 
   watch(sessionId, open, { immediate: true });
   onScopeDispose(close);
 
-  return { state, send, answer, cancel, loadEarlier, dismissError };
+  /** Follow the stream again after it died, e.g. refused once the sign-in ran out. */
+  function reopen(): void {
+    open(sessionId.value);
+  }
+
+  return { state, send, answer, cancel, loadEarlier, dismissError, reopen };
 }

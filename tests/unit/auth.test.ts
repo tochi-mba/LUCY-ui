@@ -212,6 +212,22 @@ describe("the sign-in's life", () => {
     expect(auth.expiring(0)).toBe(false);
   });
 
+  it("pauses on a refusal and resumes when a fresh token is adopted", async () => {
+    // The bug, named: an expired sign-in left every poll retrying with the dead token, a
+    // fresh 401 every few seconds, for as long as the dialog sat open.
+    const { auth } = build({ store: memoryStore(fresh) });
+    auth.restore();
+    expect(auth.state.refused).toBe(false);
+    auth.requireSignIn();
+    expect(auth.state.refused).toBe(true);
+    expect(auth.state.dialogOpen).toBe(true);
+    await auth.usePasted(fresh);
+    expect(auth.state.refused).toBe(false);
+    auth.requireSignIn();
+    auth.signOut();
+    expect(auth.state.refused).toBe(false);
+  });
+
   it("reopens the dialog on demand and closes it only while signed in", () => {
     const { auth } = build({ store: memoryStore(fresh) });
     auth.restore();

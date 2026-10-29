@@ -145,6 +145,18 @@ describe("opening a conversation", () => {
   });
 });
 
+describe("reopening after a refused sign-in", () => {
+  it("follows the stream again from the same conversation", async () => {
+    const { transport, conversation } = mount();
+    transport.handlers!.onEvent(snapshot);
+    await settle();
+    expect(transport.follows).toEqual(["ses"]);
+    conversation.reopen();
+    await settle();
+    expect(transport.follows).toEqual(["ses", "ses"]);
+  });
+});
+
 describe("earlier history", () => {
   it("pages back from the oldest item on screen", async () => {
     const { transport, conversation } = mount();

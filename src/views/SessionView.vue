@@ -18,6 +18,14 @@ const shell = useShell();
 const conversation = useConversation(core.transport, toRef(props, "id"));
 const state = conversation.state;
 
+// A sign-in that ran out killed the stream; a fresh token brings the conversation back.
+watch(
+  () => core.auth.state.refused,
+  (refused, was) => {
+    if (was === true && refused === false) conversation.reopen();
+  },
+);
+
 const composing = ref(false);
 const now = ref(Date.now());
 const tick = setInterval(() => {

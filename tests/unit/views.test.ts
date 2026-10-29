@@ -296,6 +296,20 @@ describe("SessionView", () => {
     }
   });
 
+  it("follows the stream again once a refused sign-in is replaced", async () => {
+    // The bug, named: a sign-in that ran out killed the stream for good, so after signing in
+    // again the conversation on screen never moved until the page was reloaded.
+    const { core, wrapper } = mountSession();
+    const followed = core.transport.handlers;
+    core.auth.requireSignIn();
+    await flushPromises();
+    expect(core.transport.handlers).toBe(followed);
+    await core.auth.usePasted(token(4_000_000_000));
+    await flushPromises();
+    expect(core.transport.handlers).not.toBe(followed);
+    wrapper.unmount();
+  });
+
   it("asks for the page before the oldest item", async () => {
     const { core, wrapper, emit } = mountSession();
     const calls: { after?: string }[] = [];

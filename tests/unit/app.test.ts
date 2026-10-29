@@ -166,4 +166,23 @@ describe("the shell", () => {
     await flushPromises();
     expect(wrapper.find(".shell-error").text()).toContain("hub away");
   });
+
+  it("stops listing while the sign-in is refused, and lists again once replaced", async () => {
+    // The bug, named: with the dialog open after a refusal, the list kept polling with the
+    // dead token, a fresh 401 every few seconds for as long as nobody signed in.
+    const { wrapper, transport, auth } = await mountApp();
+    let listed = 0;
+    transport.listSessions = () => {
+      listed += 1;
+      return Promise.resolve({ data: [], has_more: false, first_id: null, last_id: null });
+    };
+    auth.requireSignIn();
+    await flushPromises();
+    await wrapper.find(".rail-follow input").setValue(true);
+    await flushPromises();
+    expect(listed).toBe(0);
+    await auth.usePasted(token(4_000_000_000));
+    await flushPromises();
+    expect(listed).toBeGreaterThan(0);
+  });
 });
