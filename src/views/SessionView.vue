@@ -38,21 +38,28 @@ onScopeDispose(() => {
 
 const pending = computed(() => pendingCards(state));
 const speaker = computed(() => speakerFor(state.title));
-const mood = computed(() =>
-  moodFor({
-    signedIn: core.auth.state.phase === "signed_in",
-    hasSession: true,
-    stream: state.stream,
-    turn: state.turn.status,
-    pendingCards: pending.value.length,
-    connectionNeeded: state.connections.length > 0,
-    speaking: isSpeaking(state),
-    working: isWorking(state),
-    composing: composing.value,
-    outcome: state.outcome,
-    now: now.value,
-  }),
-);
+const moodInput = (quietFor: number) => ({
+  signedIn: core.auth.state.phase === "signed_in",
+  hasSession: true,
+  stream: state.stream,
+  turn: state.turn.status,
+  pendingCards: pending.value.length,
+  connectionNeeded: state.connections.length > 0,
+  speaking: isSpeaking(state),
+  working: isWorking(state),
+  composing: composing.value,
+  outcome: state.outcome,
+  now: now.value,
+  quietFor,
+});
+// Anything that changes what the face would show awake, or a new item, counts as something
+// happening; the face dozes only after a minute of none of it.
+const awake = computed(() => moodFor(moodInput(0)));
+const lastActivity = ref(Date.now());
+watch([awake, () => state.items.length], () => {
+  lastActivity.value = Date.now();
+});
+const mood = computed(() => moodFor(moodInput(now.value - lastActivity.value)));
 
 // A draft or an open card holds Follow still (the shell reads this).
 watch(

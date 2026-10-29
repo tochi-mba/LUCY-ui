@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MOOD_TEXT, MOODS, type MoodInput, moodFor, OUTCOME_MS } from "../../src/face/moods";
+import { MOOD_TEXT, MOODS, type MoodInput, moodFor, OUTCOME_MS, REST_AFTER_MS } from "../../src/face/moods";
 
 const base: MoodInput = {
   signedIn: true,
@@ -13,7 +13,21 @@ const base: MoodInput = {
   composing: false,
   outcome: null,
   now: 10_000,
+  quietFor: 0,
 };
+
+describe("resting", () => {
+  it("dozes after a quiet minute, in a conversation and at home, and never while anything is on", () => {
+    // The bug, named: an idle open conversation spent 13 to 25 seconds of main-thread time a
+    // minute redrawing a face nobody was watching change.
+    expect(moodFor({ ...base, quietFor: REST_AFTER_MS - 1 })).toBe("idle");
+    expect(moodFor({ ...base, quietFor: REST_AFTER_MS })).toBe("resting");
+    expect(moodFor({ ...base, hasSession: false, quietFor: REST_AFTER_MS })).toBe("resting");
+    expect(moodFor({ ...base, composing: true, quietFor: REST_AFTER_MS })).toBe("attentive");
+    expect(moodFor({ ...base, turn: "running", quietFor: REST_AFTER_MS })).toBe("thinking");
+    expect(moodFor({ ...base, pendingCards: 1, quietFor: REST_AFTER_MS })).toBe("needs_you");
+  });
+});
 
 describe("what the face shows", () => {
   it("sleeps signed out, whatever else is true", () => {
